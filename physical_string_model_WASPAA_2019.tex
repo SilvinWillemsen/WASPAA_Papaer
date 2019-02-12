@@ -20,7 +20,7 @@
 % Title.
 % --------------------
 \title{Estimation of Guitar String, fret and plucking position using a physical model and no training data}
-
+% Improved phyiscial models for faster and better estimation of guitar string, fret and plucking position.
 %% Single addresses (uncomment and modify for single-address case).
 %% --------------------
 %\name{Author(s) Name(s)\thanks{Thanks to XYZ agency for funding.}}
@@ -121,38 +121,21 @@ Can we eliminate the training procedure that requires the user to provide record
 %
 %
 % 
-
-\section{Ideal string model}
-%the well-known partial-differential equation for an ideal string (also known as the 1D wave-equation)
-The well-known equation of motion for an ideal string with length (nut-bridge) $L_0$ with displacement $y$ and defined over $x \in [0, L_0]$ (also known as the 1D wave equation) is
-\begin{equation}
-\frac{\partial^2y}{\partial t^2} = c^2\frac{\partial^2y}{\partial x^2},
-\end{equation}
-where $c$ is the transverse wave speed. Assuming that the string is pinned at $x=0$ and $x=L_0$ (simply supported), its general solution can be written as \cite{fletcher:physics_of_musical_instruments}:
-\begin{equation}\label{eq:modalSum}
-    y(x,t) = \sum_m C_m\sin(\omega_mt+\phi_m)\sin\kappa_mx,
-\end{equation}
-with frequency $\omega_m = m\omega_0$, wave number $\kappa_m = \omega_m / c$ and amplitude $C_m$ of the $m$th mode with $m = \mathbb{Z}^+$. For a string plucked at the $P$th fraction of its length ($0<P/L_0<1$), assuming the initial displacement to be triangular as in \cite{fletcher:physics_of_musical_instruments} and initial velocity $\frac{\partial y}{\partial t} = 0, \ \forall x$, $C_m$ can be found using \cite{donkin:acoustics}:
-\begin{equation}
-    C_m = \frac{2\delta}{m^2\pi^2P(1-P)}\sin(m\pi P), \quad [\cdot],
-\end{equation}
-where $\delta$ is the initial displacement of the string.
+\input{signal_model.tex}
 \section{Inharmonic string model} \label{sec:string_model}
 
 % \subsection{Intrinsic and deflection-caused inharmonicity}
 As opposed to the ideal string, the frequencies in the inharmonic string model are calculated using \eqref{eq:pianoModel}. The authors of \cite{coltShank} state that string inharmonicity arises from two sources: the intrinsic inharmonicity due to the $\textit{stiffness}$ of the string and inharmonicity due to $\textit{stretching}$ of the string during the initial pluck. Rossing in \cite{rossing:science_of_string_instruments} quantifies the effect of both by introducing a factor $K$:
 \begin{align}
-    K = \frac {\pi^3 E d_\text{c}^2}{16 T_0 L_0^2}, \quad [\text{m}^{-2}],
+    K = \frac {\pi^3 E d_\text{c}^2}{16 T_0 L^2}, \quad [\text{m}^{-2}],
 \end{align}
-with string-core diameter $d_\text{c}$, string-tension $T_0$, string-length (nut to bridge) $L_0$ and Young's Modulus $E$ of the string material defined in \eqref{eq:tensile_stress}.
-
-\noindent The intrinsic inharmonicity is defined as
+with string-core diameter $d_\text{c}$, string-tension $T_0$, string-length (nut to bridge) $L$ and Young's Modulus $E$ of the string material defined in \eqref{eq:tensile_stress}. The intrinsic inharmonicity is defined as
 \begin{align}\label{eq:intrinsicInharmonicity}
-    B_\text{i} = \frac {\Delta f_\text{i}}{f} = \frac {K}{4} d_\text{c}^2  \quad [\cdot],
+    B_\text{i} = \frac {K}{4} d_\text{c}^2  \quad [\cdot],
 \end{align}
-and the inharmonicity due to to maximum transverse displacement $\delta$ (pluck amplitude) is  
-\begin{align}
-    B_\delta = \frac {\Delta f_\text{d}}{f} = \frac {3K}{8} \delta^2 \quad [\cdot],
+and the inharmonicity due to plucking with maximum transverse displacement $\delta$ (pluck amplitude) is  
+\begin{align}\label{eq:displacementInharmonicity}
+    B_\delta = \frac {3K}{8} \delta^2 \quad [\cdot],
 \end{align}
 if $P=0.5$, i.e. if the string is plucked at the center.
 %This pitch shift is responsible for the initial twang (\textbf{isn't this twang especially due to higher frequency content at the beginning of the pluck} of the string and dies down rapidly after the pluck. It is assumed
@@ -168,12 +151,29 @@ if $P=0.5$, i.e. if the string is plucked at the center.
 %     B_i =  \frac{\pi^3 E d_\text{c}^4}{64 T L^2} = \frac{\pi^2 E d_\text{c}^2}{64\rho_{\text{eff}} L^4 \omega_0^2}\quad [\cdot].
 % \end{equation}
 The total inharmonicity can then be defined as
-\begin{equation}
-    B =  B_i + B_\delta =  \frac{\pi^3 E d_\text{c}^2(2d_\text{c}^2 + 3\delta^2)}{128 T_0 L_0^2}\quad [\cdot].
+\begin{equation}\label{eq:totalInharmonicity}
+    B =  B_\text{i} + B_\delta =  \frac{\pi^3 E d_\text{c}^2(2d_\text{c}^2 + 3\delta^2)}{128 T_0 L^2}\quad [\cdot].
 \end{equation}
 It is expected that $d_\text{c}\ll\delta$, i.e. the initial displacement is likely to be more than an order of magnitude greater than the string diameter. Hence, the inharmonicity caused by the pluck dominates the intrinsic inharmonicity. However, this is only true immediately after the pluck, as the effect of $B_\delta$ is only predominant immediately after the pluck. Presumably, this is the reason why the literature on this topic has disregarded the initial displacement in the calculation of inharmonicity. As in our application, we solely use the first 40 ms of the plucked string sound, it is of utmost importance to include the effect that the initial displacement has on the total inharmonicity.
 
 In the rest of this section, we will extend on the state of the art by providing more precise calculations for different aspects of the inharmonicity coefficient.
+
+\subsection{Calculating pluck deflection at arbitrary pluck-position}
+When calculating the inharmonicity due to plucking in \eqref{eq:displacementInharmonicity}, it is assumed that $P = 0.5$. Realistically, the plucking position will rarely, if not never, be in the middle of the string. We can calculate $\delta$ in \eqref{eq:displacementInharmonicity} from the transverse displacement at the $P$th fraction of the string-length $\delta_P$ where $P \neq 0.5$ utilising the change in string length due to plucking. This is calculated using
+\begin{equation}\label{eq:changeLengthPluck}
+    \Delta L_P = \sqrt{(LP)^2+{\delta_P}^2}+\sqrt{(L(1-P))^2+{\delta_P}^2} - L.
+\end{equation}
+This length extension can be used to calculate $\delta$ as if the string were plucked in the center. This will also retain the tension present in the string as $T_0$ and $\Delta L$ are proportional according to \eqref{eq:tensile_stress}. Setting $P = 0.5$, we can simplify \eqref{eq:changeLengthPluck} to
+%
+\begin{equation}\label{eq:changeLengthPluckHalf}
+    \Delta L_{0.5} = 2\sqrt{(0.5L)^2 + \delta^2} - L.
+\end{equation}
+%
+Replacing $\Delta L_{0.5}$ with the length extension $\Delta L_P$ calculated in \eqref{eq:changeLengthPluck} and solving \eqref{eq:changeLengthPluckHalf} for $\delta$ yields
+\begin{equation}
+    \delta = \frac{\sqrt{{\Delta L_P}^2+2L\Delta L_P}}{2},
+\end{equation}
+which can be used to calculate the inharmonicity due to plucking.
 \subsection{Inharmonic pitch definitions for the wrapped string %Introducing the effect of wrapping
 }
 
@@ -188,38 +188,41 @@ where $d_\text{c}$, $d_\text{w}$ are the core and wrapping diameters and $\rho_\
 \begin{equation}
     \rho_{\textup{eff}} = \rho_\text{c} + \rho_\text{w} \big[(1+2\frac{d_\text{w}}{d_\text{c}})^2-1\big], \quad [\text{kg}\cdot\text{m}^{-3}].
 \end{equation}
-This effective density can be used to calculate the pitch for the string, from the tension and length. The relation between the string length (nut-bridge) $L_0$, the tension $T_0$ and the pitch $\omega_0$ is:
+This effective density can be used to calculate the pitch for the string, from the tension and length. The relation between the string length (nut-bridge) $L$, the tension $T$ and the pitch $\omega_0$ is:
 
 \begin{equation}\label{eq:tension}
-    T_0 = \pi (L_0\omega_0)^2d_\text{c}^2\rho_{\textup{eff}} = \mu(2L_0\omega_0)^2, \quad [\text{N}],
+    T = \pi (L\omega_0)^2d_\text{c}^2\rho_{\textup{eff}} = \mu(2L\omega_0)^2, \quad [\text{N}],
 \end{equation}
 from which the equation for pitch can easily be derived:
 \begin{equation}
-    \omega_0 = \sqrt{\frac{T_0}{\mu}} \frac{1}{2L_0} \quad [\text{s}^{-1}],
+    \omega_0 = \sqrt{\frac{T}{\mu}} \frac{1}{2L} \quad [\text{s}^{-1}],
 \end{equation}
 where the mass and length are being considered as constants. 
-When the string is brought to pitch (tuned) it stretches according to its elastic modulus $E$ which is defined as
+%
+%
+%
+%
+\subsection{Calculating Young's Modulus $E$ for wrapped strings}%Calculating strain length $\Delta L$ from material properties}
+%
+When the string is brought to pitch (tuned) it stretches according to its Young's modulus (or elastic modulus) $E$ which is defined as
 %
 \begin{equation}\label{eq:tensile_stress}
     E = \frac{\text{Tensile stress}}{\text{Strain}}
-   %= \frac{T_0/A_\text{c}}{\Delta L/(L_0 - \Delta L)} 
-    = \frac{T_0/A_\text{c}}{\Delta L/(L_0 - \Delta L)} \quad [\text{N}\cdot\text{m}^{-2}], 
+   %= \frac{T/A_\text{c}}{\Delta L/(L - \Delta L)} 
+    = \frac{T/A_\text{c}}{\Delta L/(L - \Delta L)} \quad [\text{N}\cdot\text{m}^{-2}], 
 \end{equation}
 %
-where $A_\text{c} = \pi d_\text{c}^2/4$ is the cross sectional area of the string-core and $\Delta L$ is the amount by which the string is stretched. The variables $E$, $A_\text{c}$ and $L_0$ are constants and $T_0$ and $\Delta L$ are proportional to each other. We use $L_0 - \Delta L$ to describe the original string length when $T_0$ was 0.
-%
-%
-%
-%
-\subsection{Calculating effective Young's Modulus $E_\text{eff}$}%Calculating strain length $\Delta L$ from material properties}
-%
+where $A_\text{c} = \pi d_\text{c}^2/4$ is the cross sectional area of the string-core and $\Delta L$ is the amount by which the string is stretched. The variables $E$, $A_\text{c}$ and $L$ are constants and $T$ and $\Delta L$ are proportional to each other. Important to note is that we use $L - \Delta L$ to describe the original string length before stretched to $L$.
+
+The Young's modulus is a property defines for solid materials. Even though the string core and wrapping could be the same material, the wrapping is not solid! This means that when calculating the total inharmonicity using \eqref{eq:totalInharmonicity} for a wrapped string, the Young's modulus will be incorrect. In this section we will show a way to calculate an 'effective' Young's modulus $E_\text{eff}$ which can be used for calculating the inharmonicity. 
+
 It requires high precision to measure $\Delta L$ in a guitar string. It is, however, possible to calculate it from material constants. For the core of the string we can rewrite~\eqref{eq:tensile_stress}, i.e.,
 %
 \begin{equation}\label{eq:deltaL}
-    \Delta L= \frac{L_0T_\text{c}}{A_\text{c}E + T_\text{c}}, \quad  [\text{m}], 
+    \Delta L= \frac{LT_\text{c}}{A_\text{c}E + T_\text{c}}, \quad  [\text{m}], 
 \end{equation}
 %
-where $T_\text{c}$ is the tension contributed by the core. For single-cored strings $T_\text{c} = T_0$.
+where $T_\text{c}$ is the tension contributed by the core. For single-cored strings $T_\text{c} = T$.
 %
 The effect of wrapping on the tension is small, though not neglegible. We can assume the wrapping to be a spring with spring constant~\cite{childs:mechanical_engineering}
 %
@@ -227,7 +230,7 @@ The effect of wrapping on the tension is small, though not neglegible. We can as
     k = \frac{Gd_\text{w}^4}{8ND^3}, \quad [\text{N}\cdot\text{m}^{-1}].
 \end{equation}
 %
-Here, $G$ is the shear modulus of the wrapping material, $N = \frac{L_0 - \Delta L}{d_\text{w}}$ is the number turns in the coil (assuming that for the untensioned string, every coil touches the previous and the next coil) and $D = d_\text{c}+d_\text{w}$ is the mean diameter of the spring~\cite{kemp:wound_and_unwound_strings}.
+Here, $G$ is the shear modulus of the wrapping material, $N = \frac{L - \Delta L}{d_\text{w}}$ is the number turns in the coil (assuming that for the untensioned string, every coil touches the previous and the next coil) and $D = d_\text{c}+d_\text{w}$ is the mean diameter of the spring~\cite{kemp:wound_and_unwound_strings}.
 %
 The length extension $\Delta L$ for a spring is
 %
@@ -237,20 +240,20 @@ The length extension $\Delta L$ for a spring is
 %
 where $T_\text{w}$ is the tension contributed by the wrapping. As in \eqref{eq:k_wrapping}, $k$ is dependent on $\Delta L$ (through variable $N$), we rewrite  \eqref{eq:deltaL_wrapping} to isolate $\Delta L$:
 \begin{equation}\label{eq:deltaLwrappingIsolated}
-    \Delta L = T_\text{w}\frac{8(\frac{L_0 - \Delta L}{d_\text{w}})D^3}{Gd_\text{w}^4} = \frac{8T_\text{w}L_0D^3}{Gd_\text{w}^5 + 8T_\text{w}D^3} \quad [\text{m}].
+    \Delta L = T_\text{w}\frac{8(\frac{L - \Delta L}{d_\text{w}})D^3}{Gd_\text{w}^4} = \frac{8T_\text{w}LD^3}{Gd_\text{w}^5 + 8T_\text{w}D^3} \quad [\text{m}].
 \end{equation}
-% We know the desired tension $T_0$ for all strings. However, we can not fill this into the above formulas because the  the core and wrapping have a very different contribution on the total tension. 
+% We know the desired tension $T$ for all strings. However, we can not fill this into the above formulas because the  the core and wrapping have a very different contribution on the total tension. 
 Furthermore, we know that the core and wrapping are part of the same string, meaning that they undergo the same length-extension $\Delta L$. We can thus set~\eqref{eq:deltaL} equal to~\eqref{eq:deltaLwrappingIsolated}, i.e., 
 %
 \begin{equation}
-    \Delta L = \frac{L_0T_\text{c}}{A_\text{c}E + T_\text{c}} = \frac{8D^3L_0T_\text{w}}{Gd_\text{w}^5 + 8D^3T_\text{w}} \quad [\text{m}].
+    \Delta L = \frac{LT_\text{c}}{A_\text{c}E + T_\text{c}} = \frac{8D^3LT_\text{w}}{Gd_\text{w}^5 + 8D^3T_\text{w}} \quad [\text{m}].
 \end{equation}
 %
-As we know the desired tension $T_0$ through \eqref{eq:tension} and $T_0 = T_\text{c} + T_\text{w}$, we can calculate the effect of the core and wrapping tensions:
+As we know the desired tension $T$ through \eqref{eq:tension} and $T = T_\text{c} + T_\text{w}$, we can calculate the effect of the core and wrapping tensions:
 %
 \begin{equation}
-    T_\text{c} = \frac{8A_\text{c}D^3ET_0}{Gd_\text{w}^5+8A_\text{c}D^3E}\text{ , } \newline
-    T_\text{w} = \frac{GT_0d_\text{w}^5}{Gd_\text{w}^5 + 8A_\text{c}D^3E} \quad [\text{N}].
+    T_\text{c} = \frac{8A_\text{c}D^3ET}{Gd_\text{w}^5+8A_\text{c}D^3E}\text{ , } \newline
+    T_\text{w} = \frac{GTd_\text{w}^5}{Gd_\text{w}^5 + 8A_\text{c}D^3E} \quad [\text{N}].
 \end{equation}
 %
 An alternative way to calculate the contributions of $T_\text{c}$ and $T_\text{w}$ on the total tension is to compute their ratio $T_{c/w}$. This simplifies the above definitions to
@@ -262,11 +265,12 @@ An alternative way to calculate the contributions of $T_\text{c}$ and $T_\text{w
 and can be used to calculate $T_\text{c}$ and $T_\text{w}$ by
 %
 \begin{equation}\label{eq:Tc_derived}
-    %T_\text{c} (\frac{1}{\tau_{c/w}}+1) = T_0, \qquad T_\text{w} (\tau_{c/w} + 1) = T_0,  \\
-    T_\text{c} = \frac{T_0}{\frac{1}{T_{c/w}}+1}, \quad T_\text{w} = \frac{T_0}{T_{c/w}+1}\quad [\text{N}].
+    %T_\text{c} (\frac{1}{\tau_{c/w}}+1) = T, \qquad T_\text{w} (\tau_{c/w} + 1) = T,  \\
+    T_\text{c} = \frac{T}{\frac{1}{T_{c/w}}+1}, \quad T_\text{w} = \frac{T}{T_{c/w}+1}\quad [\text{N}].
 \end{equation}
 %
 Finally, inserting $T_c$ into \eqref{eq:deltaL} or $T_\text{w}$ into \eqref{eq:k_wrapping} for wrapped strings, gives the length extension based on the string-material properties of both core and wrapping. 
+This can then be filled in to \eqref{eq:tensile_stress} to calculate the effective
 %
 %
 \subsection{An MAP string and fret classifier}
@@ -305,8 +309,8 @@ The prior $P(\gamma_k)$ can be specified from the number of training samples fro
 \section{A Monte Carlo simulation based model}
 In the following simulation, we model the feature space distributions based on physical parameters retaining to the string physics. Such parameters are given by string manufacturers and printed on the string package. In the following simulation the physical parameters of the strings are:
 \begin{itemize}
-    \item String length $\sim \mathcal{N}(L_0,\,\sigma_{L_0}^{2})$.
-    \item String Tension $\sim \mathcal{N}(T_0,\,\sigma_{T_0}^{2})$.
+    \item String length $\sim \mathcal{N}(L,\,\sigma_{L}^{2})$.
+    \item String Tension $\sim \mathcal{N}(T,\,\sigma_{T}^{2})$.
     \item Plucking deflection $\sim \mathcal{N}(\delta,\,\sigma_{\delta}^{2})$.
 
     \item Core diameter $\sim \mathcal{N}(d_\text{c},\,\sigma_{d_\text{c}}^{2})$.
