@@ -1,12 +1,17 @@
 
 \section{signal model}
 The signal model is derived from the string vibrations, thus we start by modeling the string 
-deflection as caused by activation from the guitar pick. The string has initial displacement $\delta$ at the plucking position $P$. %At release the vibrating string has length $L$
+deflection as caused by activation from the guitar pick. 
+%
+The string has initial displacement $\delta$ at the plucking position $P$, at the
+$P$th fraction of its length $(0<P/L<1)$. %At release the vibrating string has length $L$
 
 The well-known equation of motion for an ideal string with length (nut-bridge) $L$ with displacement $y$ and defined over $l \in [0, L]$ (also known as the 1D wave equation) is
+%
 \begin{equation}
 \frac{\partial^2y}{\partial t^2} = c^2\frac{\partial^2y}{\partial l^2},
 \end{equation}
+%
 where $c$ is the transverse wave speed. Assuming that the string is pinned at $l=0$ and $l=L$ (simply supported), its general solution can be written as~\cite{fletcher:physics_of_musical_instruments}:
 %
 \begin{equation}\label{eq:modalSum}
