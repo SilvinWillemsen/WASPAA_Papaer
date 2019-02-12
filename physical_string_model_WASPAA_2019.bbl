@@ -1,0 +1,88 @@
+\begin{thebibliography}{10}
+\providecommand{\url}[1]{#1}
+\def\UrlFont{\rmfamily}
+\providecommand{\newblock}{\relax}
+\providecommand{\bibinfo}[2]{#2}
+\providecommand\BIBentrySTDinterwordspacing{\spaceskip=0pt\relax}
+\providecommand\BIBentryALTinterwordstretchfactor{4}
+\providecommand\BIBentryALTinterwordspacing{\spaceskip=\fontdimen2\font plus
+\BIBentryALTinterwordstretchfactor\fontdimen3\font minus
+  \fontdimen4\font\relax}
+\providecommand\BIBforeignlanguage[2]{{%
+\expandafter\ifx\csname l@#1\endcsname\relax
+\typeout{** WARNING: IEEEtran.bst: No hyphenation pattern has been}%
+\typeout{** loaded for the language `#1'. Using the pattern for}%
+\typeout{** the default language instead.}%
+\else
+\language=\csname l@#1\endcsname
+\fi
+#2}}
+
+\bibitem{hjerrild::icassp19}
+J.~Hjerrild and M.~Christensen, ``Estimation of guitar string, fret and
+  plucking position using parametric pitch estimation,'' \emph{Proc.\ IEEE
+  Int.\ Conf.\ Acoust., Speech, Signal Process.}, 2019.
+
+\bibitem{phillips}
+J.~M. Phillips, ``Jeffrey phillips design,'' \url{http://www.imjeffp.com/},
+  2018.
+
+\bibitem{fletcher:piano_model}
+H.~Fletcher, ``Normal vibration frequencies of a stiff piano string,''
+  \emph{J.\ Audio Eng.\ Soc.}, vol.~36, pp. 203--209, 1964.
+
+\bibitem{abesser:automatic_string_detection_ml}
+J.~Abe{\ss}er, ``Automatic string detection for bass guitar and electric
+  guitar,'' in \emph{From Sounds to Music and Emotions}.\hskip 1em plus 0.5em
+  minus 0.4em\relax Springer Berlin Heidelberg, 2013, pp. 333--352.
+
+\bibitem{barbancho:inharmonicity_tablature}
+I.~Barbancho, L.~Tardon, S.~Sammartino, and A.~Barbancho, ``Inharmonicity-based
+  method for the automatic generation of guitar tablature,'' \emph{IEEE Trans.
+  Audio, Speech, Language Process.}, vol.~20, no.~6, pp. 1857--1868, 2012.
+
+\bibitem{michelson2018_aes}
+J.~J. Michelson, R.~M. Stern, and T.~M. Sullivan, ``Automatic guitar tablature
+  transcription from audio using inharmonicity regression and bayesian
+  classification,'' in \emph{Audio Eng.\ Soc.}, 2018.
+
+\bibitem{fletcher:physics_of_musical_instruments}
+N.~H. Fletcher and T.~D. Rossing, \emph{The Physics of Musical Instruments},
+  2nd~ed.\hskip 1em plus 0.5em minus 0.4em\relax Springer, 1998.
+
+\bibitem{donkin:acoustics}
+W.~F. Donkin, \emph{Acoustics}, 2nd~ed.\hskip 1em plus 0.5em minus 0.4em\relax
+  Oxford Clarendon Press, 1884.
+
+\bibitem{coltShank}
+R.~S. Shankland and J.~W. Coltman, ``The departure of the overtones of a
+  vibrating wire from a true harmonic series,'' \emph{J.\ Audio Eng.\ Soc.},
+  vol.~10, no.~3, pp. 161--166, 1939.
+
+\bibitem{rossing:science_of_string_instruments}
+T.~D. Rossing, \emph{The science of string instruments}, 1st~ed.\hskip 1em plus
+  0.5em minus 0.4em\relax Springer, 2010.
+
+\bibitem{rayleigh:sound}
+L.~Rayleigh, \emph{The Theory Of Sound}, 1st~ed.\hskip 1em plus 0.5em minus
+  0.4em\relax MacMillan and Co. Ltd. London, 1894.
+
+\bibitem{firth:string_design}
+I.~Firth, ``String design equations,'' \emph{Catgut Acoustical Society}, pp.
+  3--6, 1986.
+
+\bibitem{childs:mechanical_engineering}
+P.~R.~N. Childs, \emph{Mechanical Design Engineering Handbook}.\hskip 1em plus
+  0.5em minus 0.4em\relax Butterworth-Heinemann, 2014.
+
+\bibitem{kemp:wound_and_unwound_strings}
+J.~A. Kemp, ``The physics of unwound and wound strings on the electric guitar
+  applied to the pitch intervals produced by tremolo/vibrato arm systems,''
+  \emph{{PLOS} One}, 2017.
+
+\bibitem{mspr}
+D.~R. F.~van~der Heijden, R. P. W.~Duin and D.~Tax, \emph{Classification,
+  Parameter Estimation and State Estimation}, 1st~ed.\hskip 1em plus 0.5em
+  minus 0.4em\relax John Wiley and Sons, Ltd., 2004.
+
+\end{thebibliography}

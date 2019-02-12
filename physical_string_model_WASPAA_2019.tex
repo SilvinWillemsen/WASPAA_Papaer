@@ -188,14 +188,14 @@ where $d_\text{c}$, $d_\text{w}$ are the core and wrapping diameters and $\rho_\
 \begin{equation}
     \rho_{\textup{eff}} = \rho_\text{c} + \rho_\text{w} \big[(1+2\frac{d_\text{w}}{d_\text{c}})^2-1\big], \quad [\text{kg}\cdot\text{m}^{-3}].
 \end{equation}
-This effective density can be used to calculate the pitch for the string, from the tension and length. The relation between the string length (nut-bridge) $L$, the tension $T$ and the pitch $\omega_0$ is:
+This effective density can be used to calculate the pitch for the string, from the tension and length. The relation between the string length (nut-bridge) $L$, the tension $T_0$ and the pitch $\omega_0$ is:
 
 \begin{equation}\label{eq:tension}
-    T = \pi (L\omega_0)^2d_\text{c}^2\rho_{\textup{eff}} = \mu(2L\omega_0)^2, \quad [\text{N}],
+    T_0 = \pi (L\omega_0)^2d_\text{c}^2\rho_{\textup{eff}} = \mu(2L\omega_0)^2, \quad [\text{N}],
 \end{equation}
 from which the equation for pitch can easily be derived:
 \begin{equation}
-    \omega_0 = \sqrt{\frac{T}{\mu}} \frac{1}{2L} \quad [\text{s}^{-1}],
+    \omega_0 = \sqrt{\frac{T_0}{\mu}} \frac{1}{2L} \quad [\text{s}^{-1}],
 \end{equation}
 where the mass and length are being considered as constants. 
 %
@@ -209,12 +209,12 @@ When the string is brought to pitch (tuned) it stretches according to its Young'
 \begin{equation}\label{eq:tensile_stress}
     E = \frac{\text{Tensile stress}}{\text{Strain}}
    %= \frac{T/A_\text{c}}{\Delta L/(L - \Delta L)} 
-    = \frac{T/A_\text{c}}{\Delta L/(L - \Delta L)} \quad [\text{N}\cdot\text{m}^{-2}], 
+    = \frac{T_0/A_\text{c}}{\Delta L/(L - \Delta L)} \quad [\text{N}\cdot\text{m}^{-2}], 
 \end{equation}
 %
-where $A_\text{c} = \pi d_\text{c}^2/4$ is the cross sectional area of the string-core and $\Delta L$ is the amount by which the string is stretched. The variables $E$, $A_\text{c}$ and $L$ are constants and $T$ and $\Delta L$ are proportional to each other. Important to note is that we use $L - \Delta L$ to describe the original string length before stretched to $L$.
+where $A_\text{c} = \pi d_\text{c}^2/4$ is the cross sectional area of the string-core and $\Delta L$ is the amount by which the string is stretched. The variables $E$, $A_\text{c}$ and $L$ are constants and $T_0$ and $\Delta L$ are proportional to each other. Important to note is that we use $L - \Delta L$ to describe the original string length before stretched to $L$.
 
-The Young's modulus is a property defines for solid materials. Even though the string core and wrapping could be the same material, the wrapping is not solid! This means that when calculating the total inharmonicity using \eqref{eq:totalInharmonicity} for a wrapped string, the Young's modulus will be incorrect. In this section we will show a way to calculate an 'effective' Young's modulus $E_\text{eff}$ which can be used for calculating the inharmonicity. 
+The Young's modulus is a property defined for solid materials. Even though the string core and wrapping could be the same material, the wrapping is not solid! This means that when calculating the total inharmonicity using \eqref{eq:totalInharmonicity} for a wrapped string, the Young's modulus will be incorrect. In this section we will show a way to calculate an 'effective' Young's modulus $E_\text{eff}$ which can be used for calculating the inharmonicity. 
 
 It requires high precision to measure $\Delta L$ in a guitar string. It is, however, possible to calculate it from material constants. For the core of the string we can rewrite~\eqref{eq:tensile_stress}, i.e.,
 %
@@ -222,7 +222,7 @@ It requires high precision to measure $\Delta L$ in a guitar string. It is, howe
     \Delta L= \frac{LT_\text{c}}{A_\text{c}E + T_\text{c}}, \quad  [\text{m}], 
 \end{equation}
 %
-where $T_\text{c}$ is the tension contributed by the core. For single-cored strings $T_\text{c} = T$.
+where $T_\text{c}$ is the tension contributed by the core. For single-cored strings $T_\text{c} = T_0$.
 %
 The effect of wrapping on the tension is small, though not neglegible. We can assume the wrapping to be a spring with spring constant~\cite{childs:mechanical_engineering}
 %
@@ -242,18 +242,18 @@ where $T_\text{w}$ is the tension contributed by the wrapping. As in \eqref{eq:k
 \begin{equation}\label{eq:deltaLwrappingIsolated}
     \Delta L = T_\text{w}\frac{8(\frac{L - \Delta L}{d_\text{w}})D^3}{Gd_\text{w}^4} = \frac{8T_\text{w}LD^3}{Gd_\text{w}^5 + 8T_\text{w}D^3} \quad [\text{m}].
 \end{equation}
-% We know the desired tension $T$ for all strings. However, we can not fill this into the above formulas because the  the core and wrapping have a very different contribution on the total tension. 
+% We know the desired tension $T_0$ for all strings. However, we can not fill this into the above formulas because the  the core and wrapping have a very different contribution on the total tension. 
 Furthermore, we know that the core and wrapping are part of the same string, meaning that they undergo the same length-extension $\Delta L$. We can thus set~\eqref{eq:deltaL} equal to~\eqref{eq:deltaLwrappingIsolated}, i.e., 
 %
 \begin{equation}
     \Delta L = \frac{LT_\text{c}}{A_\text{c}E + T_\text{c}} = \frac{8D^3LT_\text{w}}{Gd_\text{w}^5 + 8D^3T_\text{w}} \quad [\text{m}].
 \end{equation}
 %
-As we know the desired tension $T$ through \eqref{eq:tension} and $T = T_\text{c} + T_\text{w}$, we can calculate the effect of the core and wrapping tensions:
+As we know the desired tension $T_0$ through \eqref{eq:tension} and $T_0 = T_\text{c} + T_\text{w}$, we can calculate the effect of the core and wrapping tensions:
 %
 \begin{equation}
-    T_\text{c} = \frac{8A_\text{c}D^3ET}{Gd_\text{w}^5+8A_\text{c}D^3E}\text{ , } \newline
-    T_\text{w} = \frac{GTd_\text{w}^5}{Gd_\text{w}^5 + 8A_\text{c}D^3E} \quad [\text{N}].
+    T_\text{c} = \frac{8A_\text{c}D^3ET_0}{Gd_\text{w}^5+8A_\text{c}D^3E}\text{ , } \newline
+    T_\text{w} = \frac{GT_0d_\text{w}^5}{Gd_\text{w}^5 + 8A_\text{c}D^3E} \quad [\text{N}].
 \end{equation}
 %
 An alternative way to calculate the contributions of $T_\text{c}$ and $T_\text{w}$ on the total tension is to compute their ratio $T_{c/w}$. This simplifies the above definitions to
@@ -265,8 +265,8 @@ An alternative way to calculate the contributions of $T_\text{c}$ and $T_\text{w
 and can be used to calculate $T_\text{c}$ and $T_\text{w}$ by
 %
 \begin{equation}\label{eq:Tc_derived}
-    %T_\text{c} (\frac{1}{\tau_{c/w}}+1) = T, \qquad T_\text{w} (\tau_{c/w} + 1) = T,  \\
-    T_\text{c} = \frac{T}{\frac{1}{T_{c/w}}+1}, \quad T_\text{w} = \frac{T}{T_{c/w}+1}\quad [\text{N}].
+    %T_\text{c} (\frac{1}{\tau_{c/w}}+1) = T_0, \qquad T_\text{w} (\tau_{c/w} + 1) = T_0,  \\
+    T_\text{c} = \frac{T_0}{\frac{1}{T_{c/w}}+1}, \quad T_\text{w} = \frac{T_0}{T_{c/w}+1}\quad [\text{N}].
 \end{equation}
 %
 Finally, inserting $T_c$ into \eqref{eq:deltaL} or $T_\text{w}$ into \eqref{eq:k_wrapping} for wrapped strings, gives the length extension based on the string-material properties of both core and wrapping. 
@@ -310,7 +310,7 @@ The prior $P(\gamma_k)$ can be specified from the number of training samples fro
 In the following simulation, we model the feature space distributions based on physical parameters retaining to the string physics. Such parameters are given by string manufacturers and printed on the string package. In the following simulation the physical parameters of the strings are:
 \begin{itemize}
     \item String length $\sim \mathcal{N}(L,\,\sigma_{L}^{2})$.
-    \item String Tension $\sim \mathcal{N}(T,\,\sigma_{T}^{2})$.
+    \item String Tension $\sim \mathcal{N}(T_0,\,\sigma_{T_0}^{2})$.
     \item Plucking deflection $\sim \mathcal{N}(\delta,\,\sigma_{\delta}^{2})$.
 
     \item Core diameter $\sim \mathcal{N}(d_\text{c},\,\sigma_{d_\text{c}}^{2})$.
