@@ -58,7 +58,7 @@
 %
 Recordings of music performances can be analyzed for various reasons, such as extracting stylistic details, artist recognition or detailed transcription of individual instruments, which can provide means for increasing usability of music learning technologies...
 
-As shown in [REFERENCES], the inharmonicity of a guitar signal can be utilised to accurately estimate string, fret and plucking position. Inharmonicity in instruments strings arises because of the presence of stiffness in the strings. Therefore, the partial amplitudes are not located as perfect multiples of the fundamental frequency, but are rather stretched towards the higher end.
+As shown in~\cite{barbancho:inharmonicity_tablature,michelson2018_aes}, the inharmonicity of a guitar signal can be utilised to accurately estimate string and fret position. Inharmonicity in instruments strings arises because of the presence of stiffness in the strings. Therefore, the partial amplitudes are not located as perfect multiples of the fundamental frequency, but are rather stretched towards the higher end.
 % Specifically, the activated string and fret as
 % well as the location of the plucking event along the guitar string are
 % extracted from guitar signal recordings
@@ -68,36 +68,28 @@ Furthermore, nearly all literature on the topic of inharmonicity, ignores or ass
 % In this paper, we discuss how to obtain such a model based only on physical string parameters, such that we can exclude the requirement for training data, based on recordings.
 
 \section{Problem Formulation}
-The overall problem in this paper is the estimation of the guitar string, fret and plucking position without requiring any audio for training a model. The feature set is based on~\cite{hjerrild::icassp19} where pitch $\omega_0$ and inharmonicity $B$ is extracted with a parametric pitch estimator.  Instead of training a model from audio recordings, we propose a simulated model of guitar string vibrations based on physical properties such as dimensions and materials. Figure~\ref{fig:guitar_overview} gives an overview of the guitar, where 
-\begin{figure}[h!]\
-  \centering
-  \centerline{\includegraphics[width=1\columnwidth]{img/fender_drawing4.png}}
-  \caption{The plucking position is controlled by the right hand while the left hand controls pitch using the fretboard. Similar pitch is produced in various positions. Source: Adapted from~\cite{phillips}.
-  }\label{fig:guitar_overview}\vspace{-2mm}
-\end{figure}
-%
-the right hand controls plucking position and the left hand controls pitch by using the fretboard. One pitch is produced in various positions and each string and fret combination is defined as one class, such that we have a set of $K$ mutually exclusive classes. 
+The overall problem in this paper is the estimation of the guitar string, fret and plucking position without requiring any audio for training a model. The feature set is based on~\cite{hjerrild::icassp19} where pitch $\omega_0$ and inharmonicity $B$ is extracted with a parametric pitch estimator.  Instead of training a model from audio recordings, we propose a simulated model of guitar string vibrations based on physical properties such as dimensions and materials. Figure~\ref{fig:guitar_overview} gives an overview of the guitar, where the right hand controls plucking position and the left hand controls pitch by using the fretboard. One pitch is produced in various positions and each string and fret combination is defined as one class, such that we have a set of $K$ mutually exclusive classes. 
 %
 %
 %
 % 
 As demonstrated in~\cite{hjerrild::icassp19} a maximum likelihood classifier with a physically meaningful feature set consisting of pitch $\omega_0$ and inharmonicity $B$ can be utilized for distinguishing between string and fret combinations. 
-Since the string is inharmonic the $m$th instantaneous frequency $\psi(\omega_0,B)$ is defined by the piano string model derived in~\cite{fletcher:piano_model} as 
+Since the string is inharmonic the $m$th instantaneous frequency $\psi(\omega_0,B)$ is defined by the piano string model derived in~\cite{fletcher:piano_model}, %as 
 %
-\begin{equation}\label{eq:pianoModel}
-  \psi_m(\omega_0,B) = m \omega_0 \sqrt{1+B m^2} \quad [\text{s}^{-1}], 
-\end{equation}
+% \begin{equation}\label{eq:pianoModel}
+%   \psi_m(\omega_0,B) = m \omega_0 \sqrt{1+B m^2} \quad [\text{s}^{-1}], 
+% \end{equation}
 where fundamental frequency $\omega_0$ and inharmonicity coefficient $B$ can be estimated without detailed knowledge of the physics that defines the inharmonicity~\cite{ hjerrild::icassp19,abesser:automatic_string_detection_ml, barbancho:inharmonicity_tablature,michelson2018_aes}. 
 However, modelling all classes on the guitar requires training data captured from each class. For 6 strings and 12 frets that is $K=72$  classes. Although~\cite{hjerrild::icassp19,barbancho:inharmonicity_tablature} shows that a fast training procedure requires only training data captured from one fret per string. There are three main challenges associated with such a a fast training procedure,%, which requires some work from the user. 
 \begin{itemize}
     \item There is no information of class dependent distributions in the observed feature space, i.e. covariance structures. Except from the 6 classes represented in the training set.
     \item With only a few observations (i.e. 10 per string~\cite{hjerrild::icassp19}), it is impossible to conclude anything significant on the covariance structure of each class.
-    \item Although training is relatively fast, it is required for every time for every different set of guitar strings.
+    \item Although training is relatively fast, it is required for every different set of guitar strings.
 %    \item  Can we eliminate the training procedure that requires recordings ?
 %    \item  Can we extract the inharmonicity with higher precision based on the physical model of plucking ?
 \end{itemize}
 Can we eliminate the training procedure that requires the user to provide recordings and at the same time obtain a detailed and class dependent distribution in the feature space? To overcome these problems, we will build a model from string material properties and dimensions. Detailed information of such properties are generally available on string packets.
-
+%
 %
 %
 %
@@ -122,22 +114,61 @@ Can we eliminate the training procedure that requires the user to provide record
 %
 % 
 \input{signal_model.tex}
-\section{Inharmonic string model} \label{sec:string_model}
+%
+%
+% %
+% \section{Inharmonic string model} \label{sec:string_model}
 
-% \subsection{Intrinsic and deflection-caused inharmonicity}
-As opposed to the ideal string, the frequencies in the inharmonic string model are calculated using \eqref{eq:pianoModel}. The authors of \cite{coltShank} state that string inharmonicity arises from two sources: the intrinsic inharmonicity due to the $\textit{stiffness}$ of the string and inharmonicity due to $\textit{stretching}$ of the string during the initial pluck. Rossing in \cite{rossing:science_of_string_instruments} quantifies the effect of both by introducing a factor $K$:
-\begin{align}
-    K = \frac {\pi^3 E d_\text{c}^2}{16 T_0 L^2}, \quad [\text{m}^{-2}],
-\end{align}
-with string-core diameter $d_\text{c}$, string-tension $T_0$, string-length (nut to bridge) $L$ and Young's modulus $E$ of the string material defined in \eqref{eq:tensile_stress}. The intrinsic inharmonicity is defined as
-\begin{align}\label{eq:intrinsicInharmonicity}
-    B_\text{i} = \frac {K}{4} d_\text{c}^2  \quad [\cdot],
-\end{align}
-and the inharmonicity due to plucking with maximum transverse displacement $\delta$ (pluck amplitude) is  
-\begin{align}\label{eq:displacementInharmonicity}
-    B_\delta = \frac {3K}{8} \delta^2 \quad [\cdot],
-\end{align}
-if $P=0.5$, i.e. if the string is plucked at the center.
+% % \subsection{Intrinsic and deflection-caused inharmonicity}
+% As opposed to the ideal string, the frequencies in the inharmonic string model are calculated using \eqref{eq:pianoModel}. The authors of \cite{coltShank} state that string inharmonicity arises from two sources: the intrinsic inharmonicity due to the $\textit{stiffness}$ of the string and inharmonicity due to $\textit{stretching}$ of the string during the initial pluck. Rossing in \cite{rossing:science_of_string_instruments} quantifies the effect of both by introducing a factor $K$:
+% \begin{align}
+%     K = \frac {\pi^3 E d_\text{c}^2}{16 T_0 L^2}, \quad [\text{m}^{-2}],
+% \end{align}
+% with string-core diameter $d_\text{c}$, string-tension $T_0$, string-length (nut to bridge) $L$ and Young's modulus $E$ of the string material defined in \eqref{eq:tensile_stress}. The intrinsic inharmonicity is defined as
+% \begin{align}\label{eq:intrinsicInharmonicity}
+%     B_\text{i} = \frac {K}{4} d_\text{c}^2  \quad [\cdot],
+% \end{align}
+% and the inharmonicity due to plucking with maximum transverse displacement $\delta$ (pluck amplitude) is  
+% \begin{align}\label{eq:displacementInharmonicity}
+%     B_\delta = \frac {3K}{8} \delta^2 \quad [\cdot],
+% \end{align}
+% if $P=0.5$, i.e. if the string is plucked at the center.
+% %This pitch shift is responsible for the initial twang (\textbf{isn't this twang especially due to higher frequency content at the beginning of the pluck} of the string and dies down rapidly after the pluck. It is assumed
+% %
+% % According to~\cite{fletcher:piano_model} the $\textit{intrinsic string inharmonicity}$ $B_i$ is
+% %
+% % \begin{equation}
+% %     B_i = \frac{\pi^2 E A R_g^2}{T L^2}, \quad [\cdot],
+% % \end{equation}
+% % where the radius of gyration $R_g^2 = \frac{I}{A} = \frac{\pi}{4}\big(\frac{d_\text{c}}{2}\big)^4 \frac{1}{A}$ assuming a one-dimensional - not planar - radius of gyration
+% % %
+% % \begin{equation}\label{eq:intrinsicInharmonicity}
+% %     B_i =  \frac{\pi^3 E d_\text{c}^4}{64 T L^2} = \frac{\pi^2 E d_\text{c}^2}{64\rho_{\text{eff}} L^4 \omega_0^2}\quad [\cdot].
+% % \end{equation}
+% The total inharmonicity can then be defined as
+% \begin{equation}\label{eq:totalInharmonicity}
+%     B =  B_\text{i} + B_\delta =  \frac{\pi^3 E d_\text{c}^2(2d_\text{c}^2 + 3\delta^2)}{128 T_0 L^2}\quad [\cdot].
+% \end{equation}
+
+%
+\section{Extensions on the inharmonic string}
+The authors of \cite{coltShank} state that string inharmonicity arises from two sources: the intrinsic inharmonicity due to the $\textit{stiffness}$ of the string and inharmonicity due to $\textit{stretching}$ of the string during the initial pluck. Using Rossing's quantification of these sources in \cite{rossing:science_of_string_instruments} we propose the total inharmonicity to be an addition of both:
+% \begin{align}
+%     K = \frac {\pi^3 E d_\text{c}^2}{16 T_0 L^2}, \quad [\text{m}^{-2}],
+% \end{align}
+\begin{equation}\label{eq:totalInharmonicity}
+    B =  \frac {\pi^3 E d_\text{c}^2}{16 T_0 L^2}\left(\frac {d_\text{c}^2}{4}   +  \frac {3\delta^2}{8} \right)  =  \frac{\pi^3 E d_\text{c}^2(2d_\text{c}^2 + 3\delta^2)}{128 T_0 L^2}\quad [\cdot].
+\end{equation}
+with string-core diameter $d_\text{c}$, string-tension $T_0$ and Young's Modulus $E$ of the string material defined in \eqref{eq:tensile_stress}.
+% The intrinsic inharmonicity and inharmonicity due to plucking with maximum transverse displacement $\delta$ (pluck amplitude) for $P=0.5$, i.e. if the string is plucked at the center, are defined as
+% \begin{align}\label{eq:intrinsicInharmonicity}
+%     B_\text{i} = \frac {K}{4} d_\text{c}^2\quad \text{and}\quad B_\delta = \frac {3K}{8} \delta^2.
+% \end{align}
+% and the inharmonicity due to plucking with maximum transverse displacement $\delta$ (pluck amplitude) is  
+% \begin{align}\label{eq:displacementInharmonicity}
+%     B_\delta = \frac {3K}{8} \delta^2 \quad [\cdot],
+% \end{align}
+% if $P=0.5$, i.e. if the string is plucked at the center.
 %This pitch shift is responsible for the initial twang (\textbf{isn't this twang especially due to higher frequency content at the beginning of the pluck} of the string and dies down rapidly after the pluck. It is assumed
 %
 % According to~\cite{fletcher:piano_model} the $\textit{intrinsic string inharmonicity}$ $B_i$ is
@@ -150,16 +181,31 @@ if $P=0.5$, i.e. if the string is plucked at the center.
 % \begin{equation}\label{eq:intrinsicInharmonicity}
 %     B_i =  \frac{\pi^3 E d_\text{c}^4}{64 T L^2} = \frac{\pi^2 E d_\text{c}^2}{64\rho_{\text{eff}} L^4 \omega_0^2}\quad [\cdot].
 % \end{equation}
-The total inharmonicity can then be defined as
-\begin{equation}\label{eq:totalInharmonicity}
-    B =  B_\text{i} + B_\delta =  \frac{\pi^3 E d_\text{c}^2(2d_\text{c}^2 + 3\delta^2)}{128 T_0 L^2}\quad [\cdot].
-\end{equation}
-It is expected that $d_\text{c}\ll\delta$, i.e. the initial displacement is likely to be more than an order of magnitude greater than the string diameter. Hence, the inharmonicity caused by the pluck dominates the intrinsic inharmonicity. However, this is only true immediately after the pluck, as the effect of $B_\delta$ is only predominant immediately after the pluck. Presumably, this is the reason why the literature on this topic has disregarded the initial displacement in the calculation of inharmonicity. As in our application, we solely use the first 40 ms of the plucked string sound, it is of utmost importance to include the effect that the initial displacement has on the total inharmonicity.
+% The total inharmonicity can then be defined as
+% \begin{equation}\label{eq:totalInharmonicity}
+%     B =  B_\text{i} + B_\delta =  \frac{\pi^3 E d_\text{c}^2(2d_\text{c}^2 + 3\delta^2)}{128 T_0 L^2}\quad [\cdot].
+% \end{equation}
+% 
+%where the inharmonicity coefficient $B$ is a combination of intrinsic inharmonicity and inharmonicity due to plucking:
+% 
+% 
+% 
+% as one contribution from string properties and one from the plucking deflection $\delta$, i.e.,
+% Rossing  quantifies the physical relations of~\eqref{eq:totalInharmonicity} in~\cite{rossing:science_of_string_instruments}
+% with string-core diameter $d_\text{c}$, string-tension $T_0$ and Young's modulus $E$ of the string material defined in \eqref{eq:tensile_stress}.
+% 
+% \noindent We propose to model the pitch as 
+% % It is clear that we can express the pitch with the well known equation:
+% \begin{equation}
+%     \omega_0 = \sqrt{\frac{T_0}{\mu}} \frac{1}{2L_0} \quad [s^{-1}].
+% \end{equation}
+It is expected that $d_\text{c}\ll\delta$, i.e. the initial displacement is likely to be more than an order of magnitude greater than the string diameter. Hence, the inharmonicity caused by the pluck dominates the intrinsic inharmonicity. However, this is only true immediately after the pluck, as the effect of $B_\delta$ is only predominant immediately after the pluck \cite{rossing:science_of_string_instruments}. %Presumably, this is the reason why the literature on this topic has disregarded the initial displacement in the calculation of inharmonicity. 
+As in our application, we solely use the first 40 ms of the plucked string sound, it is of utmost importance to include the effect that the initial displacement has on the total inharmonicity.
 
-In the rest of this section, we will extend on the state of the art by providing more precise calculations for different aspects of the inharmonicity coefficient.
+In the rest of this section, we will extend on the state of the art by providing more precise calculations for different parameters used to calculate the inharmonicity coefficient.
 
 \subsection{Calculating pluck deflection at arbitrary pluck-position}
-When calculating the inharmonicity due to plucking in \eqref{eq:displacementInharmonicity}, it is assumed that $P = 0.5$. Realistically, the plucking position will rarely, if not never, be in the middle of the string. We can calculate $\delta$ in \eqref{eq:displacementInharmonicity} from the transverse displacement at the $P$th fraction of the string-length $\delta_P$ where $P \neq 0.5$ utilising the change in string length due to plucking. This is calculated using
+In \cite{rossing:science_of_string_instruments} it is assumed that $P=0.5$, i.e. if the string is plucked at the center. Realistically, the plucking position will rarely, if not never, be in the middle of the string. We can calculate $\delta$ in \eqref{eq:totalInharmonicity} from the transverse displacement at the $P$th fraction of the string-length $\delta_P$ where $P \neq 0.5$ utilising the change in string length due to plucking. This is calculated using
 \begin{equation}\label{eq:changeLengthPluck}
     \Delta L_P = \sqrt{(LP)^2+{\delta_P}^2}+\sqrt{(L(1-P))^2+{\delta_P}^2} - L.
 \end{equation}
@@ -174,34 +220,7 @@ Replacing $\Delta L_{0.5}$ with the length extension $\Delta L_P$ calculated in 
     \delta = \frac{\sqrt{{\Delta L_P}^2+2L\Delta L_P}}{2},
 \end{equation}
 which can be used to calculate the inharmonicity due to plucking.
-% \subsection{Inharmonic pitch definitions for the wrapped string %Introducing the effect of wrapping
-% }
 
-% In the following we derive the model of pitch and inharmonicity by assuming that we know the string length, core and wrapping diameter,  material densities and fundamental frequencies. The inharmonicity is highly correlated with the core diameter $d_\text{c}$ and string inharmonicity has been an area of research for more than a century see i.e.,~\cite{rayleigh:sound}. For string designers, it is in general desired to lower the inharmonicity. For low-pitched strings it is not desired to simply increase the core diameter in order to lower the fundamental frequency as inharmonicity will increase by a power of 4 (as can be seen in \eqref{eq:intrinsicInharmonicity}). Therefore the strings are wrapped to add mass to the string to lower the pitch without affecting the inharmonicity by much. (BUT IT DOES A LITTLE: SEE SECTION INCLUDING $T_\text{c}$ AND $T_\text{w}$).
-
-% \noindent The mass per unit length $\mu$ of a wrapped string is defined by:
-
-% \begin{equation}
-%     \mu = \frac{\pi}{4}\Big(\rho_\text{c}d_\text{c}^2 + \rho_\text{w}\big[(2d_\text{w}+d_\text{c})^2-d_\text{c}^2\big]\Big), \quad [\text{kg}\cdot\text{m}],
-% \end{equation}
-% where $d_\text{c}$, $d_\text{w}$ are the core and wrapping diameters and $\rho_\text{c}$, $\rho_\text{w}$ are the densities of the core and wrapping respectively. When the string is single-cored ($d_\text{w} = 0$), and thus not wrapped, the second term becomes zero. Since the tension mainly acts on the core, the string can be considered a single cored string having the same mass per unit length $\mu$, but with the diameter of the core $d_\text{c}$ only. The effective density of this theoretical material is defined as~\cite{firth:string_design} (with $\frac{\pi}{4}$ removed)
-% \begin{equation}
-%     \rho_{\textup{eff}} = \rho_\text{c} + \rho_\text{w} \big[(1+2\frac{d_\text{w}}{d_\text{c}})^2-1\big], \quad [\text{kg}\cdot\text{m}^{-3}].
-% \end{equation}
-% This effective density can be used to calculate the pitch for the string, from the tension and length. The relation between the string length (nut-bridge) $L$, the tension $T_0$ and the pitch $\omega_0$ is:
-
-% \begin{equation}\label{eq:tension}
-%     T_0 = \pi (L\omega_0)^2d_\text{c}^2\rho_{\textup{eff}} = \mu(2L\omega_0)^2, \quad [\text{N}],
-% \end{equation}
-% from which the equation for pitch can easily be derived:
-% \begin{equation}
-%     \omega_0 = \sqrt{\frac{T_0}{\mu}} \frac{1}{2L} \quad [\text{s}^{-1}],
-% \end{equation}
-% where the mass and length are being considered as constants. 
-%
-%
-%
-%
 \subsection{Calculating Young's modulus $E$ for wrapped strings}%Calculating strain length $\Delta L$ from material properties}
 %
 When the string is brought to pitch (tuned) it stretches according to its Young's modulus (or elastic modulus) $E$ which is defined as
@@ -217,17 +236,17 @@ More specifically, the total tension $T_0$ will be incorrect as this will now be
 \begin{equation}\label{eq:totalTension}
     T_0 = T_\text{c} + T_\text{w},
 \end{equation}
-where $T_\text{c}$ is the tension contributed by the core and $T_\text{w}$ the tension contributed by the wrapping. In this section we will show a way to correctly calculate Young's modulus $E$ for wrapped strings.
+where $T_\text{c}$ is the tension contributed by the core and $T_\text{w}$ the tension contributed by the wrapping. In this section we present how to correctly calculate Young's modulus $E$ for wrapped strings.
 
 First of all, we can calculate $T_0$ for wrapped strings by calculating the mass per unit length $\mu$ from known material densities and diameters \cite{firth1984}
 \begin{equation}
     \mu = \frac{\pi}{4}\Big(\rho_\text{c}d_\text{c}^2 + \rho_\text{w}\big[(2d_\text{w}+d_\text{c})^2-d_\text{c}^2\big]\Big), \quad [\text{kg}\cdot\text{m}],
 \end{equation}
-with wrapping diameter $d_\text{w}$ core and wrapping densities $\rho_\text{c}$, $\rho_\text{w}$. and using this with a desired fundamental frequency $\omega_0$ to calculate $T_0$:
+with wrapping diameter $d_\text{w}$ and core and wrapping densities $\rho_\text{c}$, $\rho_\text{w}$. Together with a desired fundamental frequency $\omega_0$, this can be used to calculate $T_0$:
 \begin{equation}\label{eq:tension}
     T_0 = \mu(2L\omega_0)^2, \quad [\text{N}],
 \end{equation}
-Assuming now that we know $A_\text{c}$, $L$ and $T_0$ we need to obtain $\Delta L$ to calculate $E$ in \eqref{eq:tensile_stress}. It requires high precision to measure $\Delta L$ in a guitar string. It is, however, possible to calculate it from material properties. For the core of the string we can rewrite~\eqref{eq:tensile_stress}, i.e.,
+Assuming now that we know $A_\text{c}$, $L$ and $T_0$ we need to obtain $\Delta L$ to calculate $E$ in \eqref{eq:tensile_stress}. As it requires high precision to measure $\Delta L$ in a guitar string, we propose to calculate it from material properties. For the core of the string we can rewrite~\eqref{eq:tensile_stress}, i.e.,
 %
 \begin{equation}\label{eq:deltaL}
     \Delta L= \frac{LT_\text{c}}{A_\text{c}E + T_\text{c}}, \quad  [\text{m}]. 
@@ -280,7 +299,74 @@ and can be used to calculate $T_\text{c}$ and $T_\text{w}$ by
 %
 Finally, inserting $T_c$ into \eqref{eq:deltaL} or $T_\text{w}$ into \eqref{eq:k_wrapping}, gives the length extension based on the string-material properties of both core and wrapping, which can then be used in \eqref{eq:tensile_stress} to calculate the correct Young's modulus $E$.
 %
+\section{Proposed Method}
 %
+%\subsubsection{A Monte Carlo simulation based model}
+To overcome the problem of requiring training data and to increase computational efficiency we propose a  Monte Carlo simulation of the feature set as explained and derived from physics in the following. Such parameters are given by string manufacturers and printed on the string package. In the following simulation the physical parameters of the strings are:
+\begin{itemize}
+    \item String length $\sim \mathcal{N}(L,\,\sigma_{L}^{2})$.
+    \item String Tension $\sim \mathcal{N}(T_0,\,\sigma_{T_0}^{2})$.
+    \item Plucking deflection $\sim \mathcal{N}(\delta,\,\sigma_{\delta}^{2})$.
+
+    \item Core diameter $\sim \mathcal{N}(d_\text{c},\,\sigma_{d_\text{c}}^{2})$.
+    \item Core density $\sim \mathcal{N}(\rho_\text{c},\,\sigma_{\rho_\text{c}}^{2})$.
+    \item Wrapping diameter $\sim \mathcal{N}(d_\text{w},\,\sigma_{d_\text{w}}^{2})$.
+    \item Wrapping density $\sim \mathcal{N}(\rho_\text{w},\,\sigma_{\rho_\text{w}}^{2})$.
+
+\end{itemize}
+%
+%
+%
+%
+%
+%
+%
+%
+% \subsection{Inharmonic pitch definitions for the wrapped string %Introducing the effect of wrapping
+% }
+
+% In the following we derive the model of pitch and inharmonicity by assuming that we know the string length, core and wrapping diameter,  material densities and fundamental frequencies. The inharmonicity is highly correlated with the core diameter $d_\text{c}$ and string inharmonicity has been an area of research for more than a century see i.e.,~\cite{rayleigh:sound}. For string designers, it is in general desired to lower the inharmonicity. For low-pitched strings it is not desired to simply increase the core diameter in order to lower the fundamental frequency as inharmonicity will increase by a power of 4 (as can be seen in \eqref{eq:intrinsicInharmonicity}). Therefore the strings are wrapped to add mass to the string to lower the pitch without affecting the inharmonicity by much. (BUT IT DOES A LITTLE: SEE SECTION INCLUDING $T_\text{c}$ AND $T_\text{w}$).
+
+% \noindent The mass per unit length $\mu$ of a wrapped string is defined by:
+
+% \begin{equation}
+%     \mu = \frac{\pi}{4}\Big(\rho_\text{c}d_\text{c}^2 + \rho_\text{w}\big[(2d_\text{w}+d_\text{c})^2-d_\text{c}^2\big]\Big), \quad [\text{kg}\cdot\text{m}],
+% \end{equation}
+% where $d_\text{c}$, $d_\text{w}$ are the core and wrapping diameters and $\rho_\text{c}$, $\rho_\text{w}$ are the densities of the core and wrapping respectively. When the string is single-cored ($d_\text{w} = 0$), and thus not wrapped, the second term becomes zero. Since the tension mainly acts on the core, the string can be considered a single cored string having the same mass per unit length $\mu$, but with the diameter of the core $d_\text{c}$ only. The effective density of this theoretical material is defined as~\cite{firth:string_design} (with $\frac{\pi}{4}$ removed)
+% \begin{equation}
+%     \rho_{\textup{eff}} = \rho_\text{c} + \rho_\text{w} \big[(1+2\frac{d_\text{w}}{d_\text{c}})^2-1\big], \quad [\text{kg}\cdot\text{m}^{-3}].
+% \end{equation}
+% This effective density can be used to calculate the pitch for the string, from the tension and length. The relation between the string length (nut-bridge) $L$, the tension $T_0$ and the pitch $\omega_0$ is:
+
+% \begin{equation}\label{eq:tension}
+%     T_0 = \pi (L\omega_0)^2d_\text{c}^2\rho_{\textup{eff}} = \mu(2L\omega_0)^2, \quad [\text{N}],
+% \end{equation}
+% from which the equation for pitch can easily be derived:
+% \begin{equation}
+%     \omega_0 = \sqrt{\frac{T_0}{\mu}} \frac{1}{2L} \quad [\text{s}^{-1}],
+% \end{equation}
+% where the mass and length are being considered as constants. 
+%
+%
+%
+%
+%
+In the following, we proceed with a description of the feature extraction, based on~\cite{hjerrild::icassp19}.
+\subsection{Inharmonic Partial Estimation}
+The feature set in~\eqref{eq:theta_parameters} is extracted by maximizing the likelihood function %probability of the observed data $\vecx$ given the parameters:
+\begin{equation}
+    \thetahat = \argmax{\vectheta}{\Like(\vectheta | \vecx)} = \argmax{\vectheta}{p(\vecx ; \vectheta)}.
+\end{equation}
+The observed signal distribution is modeled in circular complex white Gaussian noise, and as shown in~\cite{hjerrild::icassp19} a computationally efficient approach can be found as
+\begin{equation} \label{eq:ANLS}
+    \{\widehat\omega_0, \widehat B \} = \argmax{\omega_0,B}{\vecx^H \matZ \matZ^H \vecx} = \argmax{\omega_0,B}{ \norm{\matZ^H\vecx}_2^2},
+\end{equation}
+which can be implemented using just one FFT per segment. 
+\begin{equation}
+    	\{\widehat\omega_0,\widehat B  \} = \underset{\{\omega_0, B  \}}{\operatorname{argmax}}\; \sum_{m=1}^{M} |X(\psi_m(\omega_0,B))|^2, 
+\end{equation}
+where $X$ is the FFT of $\vecx$. Since $B\!<\!<\!1$, an initial pitch estimate is obtained with $B=0$, and from that we define a narrow two dimensional search grid for the inharmonic pitch ($\omega_0$ and $B$) to ease computational complexity. An optimal grid can be selected using~\cite{jkn:grid_size}. Finally, the amplitudes are estimated using~\eqref{eq:alphahat}.
+
 \subsection{An MAP string and fret classifier}
 Having found the pitch and the inharmonicity parameters (\textbf{HATS AREN'T RIGHT ABOVE VARIABLES $\rightarrow$}) $\boldsymbol{\phi} = [\widehat\omega_0, \widehat B ]^T$ from the observed signal snapshot $\mathbf{x} = [x(0), x(1), x(N-1)]^T$, the next problem is to classify the observed signal as being produced by a string and fret position. 
 We have a set of $K$ mutually exclusive classes $\boldsymbol{\Gamma}=\{\gamma_1,\dots,\gamma_K\}$ representing all possible string and fret positions. The MAP-optimal classifier with decision function $\hat{\gamma}(\cdot): \mathbb{R}^I \rightarrow \boldsymbol{\Gamma}  $ is 
@@ -313,22 +399,6 @@ Returning now to the classifier, neglecting terms that do not depend on the clas
 %
 %As can be seen, this classifier is the minimizer of the Euclidean distance between the observation and its expectation, with a correction factor of $2\sigma^2 P(\gamma_k)$. 
 The prior $P(\gamma_k)$ can be specified from the number of training samples from class $\gamma_k$ or be assumed uniform, in which case it reduces to a maximum likelihood classifier, see i.e.,~\cite{mspr}.
-%
-\section{A Monte Carlo simulation based model}
-In the following simulation, we model the feature space distributions based on physical parameters retaining to the string physics. Such parameters are given by string manufacturers and printed on the string package. In the following simulation the physical parameters of the strings are:
-\begin{itemize}
-    \item String length $\sim \mathcal{N}(L,\,\sigma_{L}^{2})$.
-    \item String Tension $\sim \mathcal{N}(T_0,\,\sigma_{T_0}^{2})$.
-    \item Plucking deflection $\sim \mathcal{N}(\delta,\,\sigma_{\delta}^{2})$.
-
-    \item Core diameter $\sim \mathcal{N}(d_\text{c},\,\sigma_{d_\text{c}}^{2})$.
-    \item Core density $\sim \mathcal{N}(\rho_\text{c},\,\sigma_{\rho_\text{c}}^{2})$.
-    \item Wrapping diameter $\sim \mathcal{N}(d_\text{w},\,\sigma_{d_\text{w}}^{2})$.
-    \item Wrapping density $\sim \mathcal{N}(\rho_\text{w},\,\sigma_{\rho_\text{w}}^{2})$.
-
-\end{itemize}
-%
-%
 %
 %
 \section{Evaluation} % (fold)
