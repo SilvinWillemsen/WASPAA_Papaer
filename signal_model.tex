@@ -9,30 +9,29 @@ The signal model is derived from the string vibrations, thus we start by describ
   }\label{fig:guitar_overview}\vspace{-2mm}
 \end{figure}
 %
-The string has an initial deflection $\delta$ at the plucking position, which is at the $P$th fraction of its length $(0<PL<L)$, where $L$ is the length of the vibrating string (see i.e.,~Fig.~\ref{fig:guitar_overview}). 
+The string has an initial deflection $\delta$ at the plucking position $P$, which is at the $P$th fraction of its length $(0<PL<L)$, where $L$ is the length of the vibrating string (see i.e.,~Fig.~\ref{fig:guitar_overview}). 
 %The displacement $y$ defined by the 1D wave equation: %
 %\begin{equation}
 % $\frac{\partial^2y}{\partial t^2} = c^2\frac{\partial^2y}{\partial l^2}$,
 %\end{equation}
 %
 %where $c$ is the transverse wave speed. 
-Assuming that the string is not ideal and is pinned at locations $l=0$ and $l=L$, its general solution can be written as~\cite{fletcher:physics_of_musical_instruments}
+Assuming that the string is not ideal and is pinned at locations $l=0$ and $l=L$, its general solution can be written as a sum of normal modes~\cite{fletcher:physics_of_musical_instruments}
 %
 \begin{equation}\label{eq:modalSum}
-    y(l,t) = \sum_m C_m\sin(\psi_mt+\phi_m)\sin\kappa_ml,
+    y(l,t) = \sum_m C_m\sin(\psi_m(\omega_0,B)t+\phi_m)\sin\kappa_ml,
 \end{equation}
 %
-with the amplitude $C_m$ and wave number $\kappa_m = \omega_m / c$ of the $m$th mode where $m\in \mathbb{Z}^+$. The instantaneous frequencies $\psi_m$ follow the piano model proposed in~\cite{fletcher:piano_model} as 
+where we propose to estimate string, fret and plucking position from physical models of the amplitude $C_m$, the fundamental frequency $\omega_0$ and inharmonicity coefficent $B$. In~\eqref{eq:modalSum} $\kappa_m = \omega_m / c$ and $\phi_m$ is the wave number and phase of the $m$th mode. The instantaneous frequency $\psi_m(\omega_0,B)$ follows the piano model proposed in~\cite{fletcher:piano_model} as 
 \begin{equation}\label{eq:pianoModel}
   \psi_m(\omega_0,B) = m \omega_0 \sqrt{1+B m^2} \quad [\text{s}^{-1}], 
 \end{equation}
-with fundamental frequency $\omega_0$ and inharmonicity coefficient $B$ to be discussed shortly. 
-
+that has been proven useful for accurate pitch estimation~\cite{galembo1994measuring, nillson:multipitch_inharmonic_signals} on stringed instruments and for feature extraction~\cite{michelson2018_aes,abesser2012feature,barbancho:inharmonicity_tablature} with both $\omega_0$ and $B$ as ``black box'' parameters.
 Assuming the initial displacement to be triangular and no initial velocity $\frac{\partial y}{\partial t} = 0 \, \forall\, l$, the $m$th amplitude $C_m$ is defined by the Fourier sine series as~\cite{donkin:acoustics,fletcher:principles_of_vibration_and_sound}
-\begin{equation}
+\begin{equation}\label{eq:pluck_closed_form}
     C_m = \frac{2\delta}{m^2\pi^2P(1-P)}\sin(m\pi P), \quad [\cdot].
 \end{equation}
-It can be observed that the spectral envelope is sinusoidal along the partials, and dependent only on the plucking position $P$ scaled by $m^{-2}$ for the $m$th mode.
+From~\eqref{eq:pluck_closed_form}, it can be observed that the spectral envelope is sinusoidal along the partials, and dependent only on the plucking position $P$ scaled by $m^{-2}$ for the $m$th mode.
 
 On the guitar we assume that a pickup is measuring the displacement $y(l,t)$ in close proximity to the string at location $l\!=\!\lambda$. At the discrete time instance $n$ the observed signal $x(n)$ is uniformly sampled such that is proportional to $y$, i.e.,
 \begin{equation}
@@ -42,7 +41,7 @@ We parametrize $x(n)$ as proposed in~\cite{hjerrild::icassp19}, where $x(n)$ is 
 \begin{equation}\label{eq:sigmod1}
   x(n)\! =  \!\sum\limits_{m=1}^{M}\!\! \alpha_{m} \exp\big({j\psi_m(\omega_0,B) n}\big)+v(n),
 \end{equation}
-where $\omega_0$ is the fundamental frequency, $\alpha_{m}$ is the complex amplitude of the $m$th partial, $M$ is the number of partials, $v(n)$ is noise and $\psi_m(\omega_0,B)$ is defined in~\eqref{eq:pianoModel}.
+where $\alpha_{m}$ is the complex amplitude of the $m$th partial, $M$ is the number of partials, $v(n)$ is noise and $\psi_m(\omega_0,B)$ is defined in~\eqref{eq:pianoModel}.
 %
  At time instance $n$, the observed signal vector $\vecx \in \mathbb{C}^N$ is represented as $\vecx = [x(0) \, x(1) \, \cdots \, x(N-1)]^T$, with $T$ denoting the transpose. %Do we need this?
 %A complex signal can ease both notation and computational complexity and a real-valued signal is converted to complex by using the Hilbert transform~\cite{LawrenceMarple1999}. 
